@@ -40,6 +40,10 @@ function ScrapeArticles() {
                 .parent().parent().parent().parent()
                 .find("a")
                 .attr("href");
+            result.img = $(this)
+                .parent().parent().parent()
+                .find("img")
+                .attr("src");
 
             // Prevents Article replication by checking if it exists already
             db.Article.findOne({ 'title': result.title }, function (err, res) {
