@@ -21,12 +21,12 @@ textarea,
     font-size: 18px;
   }
 
-/* .container {
+.container {
     background-color: antiquewhite;
     width: 100%;
     opacity: .8;
     border: 1px solid gray;
-} */
+}
 
 .img-wrapper {
     position: relative;
