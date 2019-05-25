@@ -1,11 +1,19 @@
+// Module Imports
+
 var axios = require("axios");
 var cheerio = require("cheerio");
 var express = require("express")
 var router = express.Router();
 var db = require("../models")
 
+// =============================================================================================================
 
-// Default route renders the index handlebars view
+// URL for scraping
+var URL = "https://thehackernews.com/search?"
+
+// =============================================================================================================
+
+// Default route for pages
 router.get('/', function (req, res) {
     res.render('index');
 });
@@ -15,14 +23,18 @@ router.get('/test', function (req, res) {
     res.render('test');
 });
 
+router.get('/404', function (req, res) {
+    res.render('404')
+})
+
+// =============================================================================================================
 
 // A function for scraping the echoJS website
 function ScrapeArticles() {
     // First, we grab the body of the html with axios
-    axios.get("https://thehackernews.com/").then(function (response) {
+    axios.get(URL).then(function (response) {
         // Then, we load that into cheerio and save it to $ for a shorthand selector
         var $ = cheerio.load(response.data);
-        // console.log(response.data)
 
         // Now, we grab every h2 within an article tag, and do the following:
         $("h2").each(function () {
@@ -42,6 +54,11 @@ function ScrapeArticles() {
                 .parent().parent().parent()
                 .find("div.home-img").find("div.img-ratio").find("img")
                 .attr("data-src")
+            result.summary = $(this)
+                .parent()
+                .find("div.home-desc")
+                .text()
+                .replace(/[^a-z0-9\s]/gi, '').replace(/[_\s]/g, ' ')
 
 
             // Prevents Article replication by checking if it exists already
@@ -64,9 +81,12 @@ function ScrapeArticles() {
                     }
                 }
             });
+
         });
     });
 };
+
+// =============================================================================================================
 
 // Route for getting all Articles from the db
 router.get("/articles", function (req, res) {
@@ -77,8 +97,9 @@ router.get("/articles", function (req, res) {
         .catch(function (err) {
             res.json(err);
         });
-    // TODO: Finish the route so it grabs all of the articles
 });
+
+// =============================================================================================================
 
 // Route for grabbing a specific Article by id, populate it with it's note
 router.get("/articles/:id", function (req, res) {
@@ -90,12 +111,9 @@ router.get("/articles/:id", function (req, res) {
         .catch(function (err) {
             res.json(err);
         });
-    // TODO
-    // ====
-    // Finish the route so it finds one article using the req.params.id,
-    // and run the populate method with "note",
-    // then responds with the article with the note included
 });
+
+// =============================================================================================================
 
 // Route for saving/updating an Article's associated Note
 router.post("/articles/:id", function (req, res) {
@@ -109,11 +127,8 @@ router.post("/articles/:id", function (req, res) {
         .catch(function (err) {
             res.json(err);
         });
-    // TODO
-    // ====
-    // save the new note that gets posted to the Notes collection
-    // then find an article from the req.params.id
-    // and update it's "note" property with the _id of the new note
 });
+
+// =============================================================================================================
 
 module.exports = router;

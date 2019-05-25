@@ -1,7 +1,9 @@
 body {
-    background-color: white;
-    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-    font-size: 14px;
+  background: url(/img/img-home.jpg) no-repeat center center fixed;
+  background-size: cover;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
 }
 
 textarea,
@@ -21,58 +23,18 @@ textarea,
     font-size: 18px;
   }
 
-.container {
+.container-fluid {
     background-color: antiquewhite;
     width: 100%;
     opacity: .8;
     border: 1px solid gray;
+  
 }
 
-.img-wrapper {
-    position: relative;
-   }
-  
-  .img-responsive {
-    width: 100%;
-    height: auto;
-    border-radius: 25px;
-  }
-  
-  .img-overlay {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+  #title {
     text-align: center;
   }
-  
-  .img-overlay:before {
-    content: ' ';
-    display: block;
-    /* adjust 'height' to position overlay content vertically */
-    height: 50%;
-  }
 
-  #nav {
-    background-color: blanchedalmond;
-  }
-
-  #wrapper {
-    width: 960px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-top: 5%;
-  }
-
-  #articles {
-    display: inline-block;
-    overflow: auto;
-    width: 60%;
-    height: 700px;
-  }
-
-  #notes {
-    float: right;
-    width: 30%;
+  #link {
+    text-align: center;
   }
