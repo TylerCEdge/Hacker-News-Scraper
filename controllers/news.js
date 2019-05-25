@@ -16,8 +16,6 @@ router.get('/test', function (req, res) {
 });
 
 
-
-
 // A function for scraping the echoJS website
 function ScrapeArticles() {
     // First, we grab the body of the html with axios
@@ -42,8 +40,9 @@ function ScrapeArticles() {
                 .attr("href");
             result.img = $(this)
                 .parent().parent().parent()
-                .find("img")
-                .attr("src");
+                .find("div.home-img").find("div.img-ratio").find("img")
+                .attr("data-src")
+
 
             // Prevents Article replication by checking if it exists already
             db.Article.findOne({ 'title': result.title }, function (err, res) {
@@ -79,10 +78,10 @@ router.get("/articles", function (req, res) {
             res.json(err);
         });
     // TODO: Finish the route so it grabs all of the articles
-  });
-  
-  // Route for grabbing a specific Article by id, populate it with it's note
-  router.get("/articles/:id", function (req, res) {
+});
+
+// Route for grabbing a specific Article by id, populate it with it's note
+router.get("/articles/:id", function (req, res) {
     db.Article.findOne({ _id: req.params.id })
         .populate("note")
         .then(function (dbArticle) {
@@ -96,10 +95,10 @@ router.get("/articles", function (req, res) {
     // Finish the route so it finds one article using the req.params.id,
     // and run the populate method with "note",
     // then responds with the article with the note included
-  });
-  
-  // Route for saving/updating an Article's associated Note
-  router.post("/articles/:id", function (req, res) {
+});
+
+// Route for saving/updating an Article's associated Note
+router.post("/articles/:id", function (req, res) {
     db.Note.create(req.body)
         .then(function (dbNote) {
             return db.Article.findOneAndUpdate({ _id: req.params.id }, { note: dbNote._id }, { new: true });
@@ -115,6 +114,6 @@ router.get("/articles", function (req, res) {
     // save the new note that gets posted to the Notes collection
     // then find an article from the req.params.id
     // and update it's "note" property with the _id of the new note
-  });
+});
 
 module.exports = router;
