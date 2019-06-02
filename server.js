@@ -1,68 +1,63 @@
-// NPM modules
-
+// Dependencies
 var express = require("express");
-var logger = require("morgan");
+var expressHandlebars = require("express-handlebars");
+var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
-var exphbs = require("express-handlebars");
+var logger = require("morgan")
 
-// =============================================================================================================
+// Port configuration
 
-// Our scraping tools
-// Axios is a promised-based http library, similar to jQuery's Ajax method
-// It works on the client and on the server
-require("axios");
-require("cheerio");
+var PORT = process.env.PORT || 3000;
 
-// =============================================================================================================
+// Instantiate Express App
 
-// Require all models
-require("./models");
-
-// =============================================================================================================
-
-var PORT = process.env.PORT || 8080;
-
-// =============================================================================================================
-
-// Initialize Express
 var app = express();
 
-// =============================================================================================================
-
-// Configure middleware
-app.engine("handlebars", exphbs({ defaultLayout: "main" }));
-app.set("view engine", "handlebars");
-
-// =============================================================================================================
-
-// Use morgan logger for logging requests
 app.use(logger("dev"));
 
-// =============================================================================================================
+// Express Router Config
 
-// Parse request body as JSON
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+var router = express.Router();
 
-// =============================================================================================================
+// Routes require
 
-// Make public a static folder
-app.use(express.static("public"));
+require("./config/routes")(router);
 
-// =============================================================================================================
+// Public folder set as static directory
 
-//Routes
-var routes = require('./controllers/news.js');
-app.use('/',routes);
+app.use(express.static(__dirname + "/public"));
 
-// =============================================================================================================
+// Handlebars connection to Express
 
-// Connect to the Mongo DB
-mongoose.connect("mongodb://localhost/scrape", { useNewUrlParser: true });
+app.engine("handlebars", expressHandlebars({
+  defaultLayout: "main"
+}));
+app.set("view engine", "handlebars");
 
-// =============================================================================================================
+// Set up BodyParser
 
-// Start the server
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
+
+// Have every request go through our router middleware
+
+app.use(router);
+
+// If deployed, use the deployed database.  Otherwise use the local mongoHeadlines database
+var db = (process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines");
+
+mongoose.connect(db, { useNewUrlParser: true, useCreateIndex: true }, function (err) {
+  if (err) {
+    console.log(err);
+  }
+  else {
+    console.log("Mongoose connection is successful!");
+  }
+});
+
+//Listen on PORT
+
 app.listen(PORT, function () {
-  console.log("App running on http://localhost:" + PORT);
+  console.log("Listening on http://localhost:" + PORT)
 });
