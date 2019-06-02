@@ -47,7 +47,7 @@ module.exports = function (router) {
     router.delete("/api/headlines/:id", function (req, res) {
         var query = {};
         query._id = req.params.id;
-        notesController.delete(query, function (err, data) {
+        headlinesController.delete(query, function (err, data) {
             res.json(data);
         });
     });
